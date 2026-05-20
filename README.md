@@ -40,7 +40,6 @@
 ```bash
 git clone https://github.com/shadi-maani/life-is-strange-butterfly-widget-clock.git
 cd life-is-strange-butterfly-widget-clock
-chmod +x install.sh
 ./install.sh
 ```
 
