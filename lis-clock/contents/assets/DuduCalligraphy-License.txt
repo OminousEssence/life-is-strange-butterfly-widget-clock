@@ -1,0 +1,15 @@
+Dudu Calligraphy Font
+Designed by Adderou
+
+LICENSE INFORMATION:
+The Dudu Calligraphy font is free for both personal and commercial use. 
+
+You are permitted to:
+- Use the font in any personal or commercial project, including digital, print, and web design.
+- Bundle and embed the font as part of software applications (such as this KDE Plasmoid widget) for redistribution.
+
+You are NOT permitted to:
+- Sell the font files themselves.
+- Redistribute the font files as a standalone font package without the accompanying software application.
+
+All rights reserved by the designer, Adderou.

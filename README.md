@@ -133,6 +133,8 @@ kpackagetool6 -t Plasma/Applet -r com.shadi.lisclock
 lis-butterfly-clock/
 ├── install.sh
 ├── LICENSE
+├── OFL.txt
+├── DuduCalligraphy-License.txt
 ├── README.md
 ├── CONTRIBUTING.md
 └── lis-clock/
@@ -148,6 +150,8 @@ lis-butterfly-clock/
         └── assets/
             ├── CabinSketch-Bold.ttf
             ├── DuduCalligraphy.ttf
+            ├── OFL.txt
+            ├── DuduCalligraphy-License.txt
             ├── butterfly1.png
             ├── butterfly2.png
             └── darkroombutterfly3.png
@@ -157,9 +161,9 @@ lis-butterfly-clock/
 
 ## License
 
-Released under the [MIT License](LICENSE).
-
-*Note: CabinSketch font is licensed under the SIL Open Font License (OFL). Dudu Calligraphy is free for personal use.*
+- **Software Code:** Released under the [MIT License](LICENSE).
+- **Cabin Sketch Font:** Licensed under the [SIL Open Font License (OFL) 1.1](OFL.txt) (bundled in the widget assets as [OFL.txt](lis-clock/contents/assets/OFL.txt)).
+- **Dudu Calligraphy Font:** Free for personal and commercial use under [Dudu Calligraphy License](DuduCalligraphy-License.txt) (bundled in the widget assets as [DuduCalligraphy-License.txt](lis-clock/contents/assets/DuduCalligraphy-License.txt)).
 
 ---
 
