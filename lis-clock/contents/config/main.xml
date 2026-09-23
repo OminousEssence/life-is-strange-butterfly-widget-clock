@@ -7,14 +7,26 @@
         <entry name="neonColor" type="Color">
             <default>#00aaff</default>
         </entry>
+        <entry name="autoNeonColor" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="textColor" type="Color">
             <default>#dff2ff</default>
+        </entry>
+        <entry name="autoTextColor" type="Bool">
+            <default>false</default>
         </entry>
         <entry name="subtitleColor" type="Color">
             <default>#dff2ff</default>
         </entry>
+        <entry name="autoSubtitleColor" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="topButterflyColor" type="Color">
             <default>#84cff9</default>
+        </entry>
+        <entry name="autoTopButterflyColor" type="Bool">
+            <default>false</default>
         </entry>
         <entry name="flapDuration" type="Int">
             <default>180</default>
