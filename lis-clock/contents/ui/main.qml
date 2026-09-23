@@ -118,22 +118,18 @@ PlasmoidItem {
         
         // ─── Digit-change reactions ───
         onMinuteOnesChanged: {
-            if (!Plasmoid.configuration.lowPowerMode) {
-                moGlitch.restart()
-                butterfly1.react()
-            }
+            moGlitch.restart()
+            if (!Plasmoid.configuration.lowPowerMode) butterfly1.react()
         }
         onMinuteTensChanged: {
-            if (!Plasmoid.configuration.lowPowerMode) mtGlitch.restart()
+            mtGlitch.restart()
         }
         onHourOnesChanged: {
-            if (!Plasmoid.configuration.lowPowerMode) {
-                hoGlitch.restart()
-                butterfly2.react()
-            }
+            hoGlitch.restart()
+            if (!Plasmoid.configuration.lowPowerMode) butterfly2.react()
         }
         onHourTensChanged: {
-            if (!Plasmoid.configuration.lowPowerMode) htGlitch.restart()
+            htGlitch.restart()
         }
         
         // ─── Glitch animations ───
@@ -196,12 +192,7 @@ PlasmoidItem {
             floatTo: -11
             flapDuration: Math.max(50, root.flapDuration - 20)
             flapScaleTo: 0.78
-            rotDurationOffset: -200
-            rotFrom: 5
-            rotTo: -10
             flickerInterval: 2500
-            flickerOpacities: [0.3, 1.0, 0.5, 1.0]
-            flickerDurations: [45, 45, 40, 80]
             x: clockRow.x + clockRow.hoBox.x + clockRow.hoBox.width * 0.7
             y: clockRow.y + clockRow.hoBox.y - height * 0.45
             isVisible: Plasmoid.configuration.showTopButterflies
