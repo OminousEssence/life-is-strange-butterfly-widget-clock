@@ -40,25 +40,25 @@ Item {
                 x: 0; y: 0
             }
             
-            // Periodic burst animation instead of infinite loop
-            ParallelAnimation {
-                id: b3BurstAnim
-                SequentialAnimation {
-                    YAnimator { target: butterfly3; from: 0; to: -6; duration: 300; easing.type: Easing.InOutSine }
-                    YAnimator { target: butterfly3; from: -6; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                }
-                SequentialAnimation {
-                    OpacityAnimator { target: butterfly3; to: 0.3; duration: 100 }
-                    OpacityAnimator { target: butterfly3; to: 1.0; duration: 200 }
-                }
+            SequentialAnimation {
+                id: b3FloatAnim
+                loops: Animation.Infinite
+                YAnimator { target: butterfly3; from: 0; to: -6; duration: Math.max(100, subtitleRoot.floatDuration); easing.type: Easing.InOutSine }
+                YAnimator { target: butterfly3; from: -6; to: 0; duration: Math.max(100, subtitleRoot.floatDuration); easing.type: Easing.InOutSine }
             }
             
             Timer {
-                id: b3BurstTimer
-                interval: Math.max(2000, subtitleRoot.flickerInterval)
+                id: b3FlickerTimer
+                interval: Math.max(1000, subtitleRoot.flickerInterval)
                 repeat: true
-                running: !subtitleRoot.lowPowerMode
-                onTriggered: b3BurstAnim.restart()
+                onTriggered: b3Flicker.restart()
+            }
+            SequentialAnimation {
+                id: b3Flicker
+                OpacityAnimator { target: butterfly3; to: 0.15; duration: 60 }
+                OpacityAnimator { target: butterfly3; to: 0.9;  duration: 60 }
+                OpacityAnimator { target: butterfly3; to: 0.35; duration: 70 }
+                OpacityAnimator { target: butterfly3; to: 0.9;  duration: 100 }
             }
         }
         
@@ -82,27 +82,28 @@ Item {
     }
     
     function restartFloat() {
-        if (!subtitleRoot.lowPowerMode) b3BurstAnim.restart()
+        if (!subtitleRoot.lowPowerMode) b3FloatAnim.restart()
     }
     
     function restartFlickerTimer() {
-        if (!subtitleRoot.lowPowerMode) b3BurstTimer.restart()
+        if (!subtitleRoot.lowPowerMode) b3FlickerTimer.restart()
     }
     
     onLowPowerModeChanged: {
         if (lowPowerMode) {
-            b3BurstTimer.stop()
-            b3BurstAnim.stop()
-            butterfly3.y = 0
-            butterfly3.opacity = 1.0
+            b3FloatAnim.stop()
+            b3FlickerTimer.stop()
+            b3Flicker.stop()
         } else {
-            b3BurstTimer.start()
+            b3FloatAnim.start()
+            b3FlickerTimer.start()
         }
     }
     
     Component.onCompleted: {
         if (!lowPowerMode) {
-            b3BurstTimer.start()
+            b3FloatAnim.start()
+            b3FlickerTimer.start()
         }
     }
 }
