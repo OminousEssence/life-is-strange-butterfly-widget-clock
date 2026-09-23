@@ -115,7 +115,7 @@ Item {
     SequentialAnimation {
         id: reactAnim
         onStarted: scaleAnim.stop()
-        onFinished: { if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) scaleAnim.restart() }
+        onFinished: { if (!butterflyRoot.lowPowerMode) scaleAnim.restart() }
         ParallelAnimation {
             ScaleAnimator { target: visualContainer; to: 1.4; duration: 250; easing.type: Easing.OutBack }
             OpacityAnimator { target: visualContainer; to: 0.3; duration: 80 }
@@ -127,42 +127,41 @@ Item {
     }
     
     function react() {
-        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) reactAnim.restart()
+        if (!butterflyRoot.lowPowerMode) reactAnim.restart()
     }
     
     function restartScale() {
-        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) scaleAnim.restart()
+        if (!butterflyRoot.lowPowerMode) scaleAnim.restart()
     }
     
     function restartFloatAndRotation() {
-        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) {
+        if (!butterflyRoot.lowPowerMode) {
             floatAnim.restart()
             rotAnim.restart()
         }
     }
     
-    // ─── Control Lifecycle ───
-    function startAll() {
-        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) {
+    onLowPowerModeChanged: {
+        if (lowPowerMode) {
+            floatAnim.stop()
+            scaleAnim.stop()
+            rotAnim.stop()
+            flickerTimer.stop()
+            flickerAnim.stop()
+        } else {
             floatAnim.start()
             scaleAnim.start()
             rotAnim.start()
             flickerTimer.start()
-        } else {
-            stopAll()
         }
     }
     
-    function stopAll() {
-        floatAnim.stop()
-        scaleAnim.stop()
-        rotAnim.stop()
-        flickerTimer.stop()
-        flickerAnim.stop()
-        reactAnim.stop()
+    Component.onCompleted: {
+        if (!lowPowerMode) {
+            floatAnim.start()
+            scaleAnim.start()
+            rotAnim.start()
+            flickerTimer.start()
+        }
     }
-    
-    onIsVisibleChanged: startAll()
-    onLowPowerModeChanged: startAll()
-    Component.onCompleted: startAll()
 }
