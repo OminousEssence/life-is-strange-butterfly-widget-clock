@@ -3,7 +3,7 @@ import QtQuick.Effects
 
 Row {
     id: clockRowRoot
-
+    
     property string hourTensText: "0"
     property string hourOnesText: "0"
     property string minuteTensText: "0"
@@ -13,27 +13,27 @@ Row {
     property bool use24HourFormat: false
     property bool showAMPM: false
     property bool lowPowerMode: false
-
+    
     property int digitSize: 90
     property int digitBoxWidth: 58
     property color textColor: "#ffffff"
     property color neonColor: "#00aaff"
     property int glowStrength: 16
     property string fontName: ""
-
+    
     // Expose aliases so parent can position butterflies and trigger glitches
     property alias htBox: htDigit
     property alias hoBox: hoDigit
     property alias mtBox: mtDigit
     property alias moBox: moDigit
-
+    
     property alias htText: htDigit.textItem
     property alias hoText: hoDigit.textItem
     property alias mtText: mtDigit.textItem
     property alias moText: moDigit.textItem
-
+    
     spacing: 2
-
+    
     // H-tens
     ClockDigit {
         id: htDigit
@@ -46,7 +46,7 @@ Row {
         glowStrength: clockRowRoot.glowStrength
         fontName: clockRowRoot.fontName
     }
-
+    
     // H-ones (b2 tracks this)
     ClockDigit {
         id: hoDigit
@@ -59,7 +59,7 @@ Row {
         glowStrength: clockRowRoot.glowStrength
         fontName: clockRowRoot.fontName
     }
-
+    
     // Colon
     Item {
         id: colonBox
@@ -80,28 +80,41 @@ Row {
             blurMax: 32
             autoPaddingEnabled: true
         }
+        
+        // One-shot pulse animation
         SequentialAnimation {
             id: colonAnim
-            loops: Animation.Infinite
-            OpacityAnimator { target: colonBox; to: 0.3; duration: 600; easing.type: Easing.InOutSine }
-            OpacityAnimator { target: colonBox; to: 1.0; duration: 600; easing.type: Easing.InOutSine }
+            OpacityAnimator { target: colonBox; to: 0.3; duration: 400; easing.type: Easing.InOutSine }
+            OpacityAnimator { target: colonBox; to: 1.0; duration: 100; easing.type: Easing.InOutSine }
+        }
+        
+        // 1-second pulse trigger
+        Timer {
+            id: colonTimer
+            interval: 1000
+            running: !clockRowRoot.lowPowerMode
+            repeat: true
+            triggeredOnStart: true
+            onTriggered: colonAnim.restart()
         }
     }
-
+    
     onLowPowerModeChanged: {
         if (lowPowerMode) {
+            colonTimer.stop()
             colonAnim.stop()
+            colonBox.opacity = 1.0
         } else {
-            colonAnim.start()
+            colonTimer.start()
         }
     }
-
+    
     Component.onCompleted: {
         if (!lowPowerMode) {
-            colonAnim.start()
+            colonTimer.start()
         }
     }
-
+    
     // M-tens
     ClockDigit {
         id: mtDigit
@@ -114,7 +127,7 @@ Row {
         glowStrength: clockRowRoot.glowStrength
         fontName: clockRowRoot.fontName
     }
-
+    
     // M-ones (b1 tracks this)
     ClockDigit {
         id: moDigit
@@ -127,7 +140,7 @@ Row {
         glowStrength: clockRowRoot.glowStrength
         fontName: clockRowRoot.fontName
     }
-
+    
     // AM/PM Indicator
     Item {
         id: ampmBox
