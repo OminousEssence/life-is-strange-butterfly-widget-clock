@@ -3,13 +3,13 @@ import QtQuick.Effects
 
 Item {
     id: butterflyRoot
-
+    
     property string imageSource: ""
     property int size: 42
     property color topButterflyColor: "#84cff9"
     property bool isVisible: true
     property bool lowPowerMode: false
-
+    
     // Animation configs
     property int floatDuration: 2800
     property real floatTo: -14
@@ -25,11 +25,11 @@ Item {
     property int flickerInterval: 1800
     property var flickerOpacities: [0.25, 1.0, 0.45, 1.0]
     property var flickerDurations: [45, 45, 40, 80]
-
+    
     width: size
     height: size
     visible: isVisible
-
+    
     // Inner container for Animator to avoid conflicting with external positioning constraints
     Item {
         id: visualContainer
@@ -38,7 +38,7 @@ Item {
         x: 0
         y: 0
         transformOrigin: Item.Center
-
+        
         // Original image — shown when using default color
         Image {
             id: bImgOriginal
@@ -50,7 +50,7 @@ Item {
             asynchronous: true
             visible: Qt.colorEqual(butterflyRoot.topButterflyColor, "#84cff9")
         }
-
+        
         // Hidden source for MultiEffect
         Image {
             id: bImgForEffect
@@ -70,7 +70,7 @@ Item {
             colorizationColor: butterflyRoot.topButterflyColor
         }
     }
-
+    
     // ─── Float ───
     SequentialAnimation {
         id: floatAnim
@@ -78,7 +78,7 @@ Item {
         YAnimator { target: visualContainer; from: 0; to: butterflyRoot.floatTo; duration: Math.max(100, butterflyRoot.floatDuration); easing.type: Easing.InOutSine }
         YAnimator { target: visualContainer; from: butterflyRoot.floatTo; to: 0; duration: Math.max(100, butterflyRoot.floatDuration); easing.type: Easing.InOutSine }
     }
-
+    
     // ─── Flap ───
     SequentialAnimation {
         id: scaleAnim
@@ -87,7 +87,7 @@ Item {
         ScaleAnimator { target: visualContainer; from: butterflyRoot.flapScaleTo; to: 1.0; duration: Math.max(50, butterflyRoot.flapDuration); easing.type: Easing.InOutQuad }
         PauseAnimation { duration: butterflyRoot.flapPause }
     }
-
+    
     // ─── Rotation ───
     SequentialAnimation {
         id: rotAnim
@@ -95,7 +95,7 @@ Item {
         RotationAnimator { target: visualContainer; from: butterflyRoot.rotFrom; to: butterflyRoot.rotTo; duration: Math.max(100, butterflyRoot.floatDuration + butterflyRoot.rotDurationOffset); easing.type: Easing.InOutSine }
         RotationAnimator { target: visualContainer; from: butterflyRoot.rotTo; to: butterflyRoot.rotFrom; duration: Math.max(100, butterflyRoot.floatDuration + butterflyRoot.rotDurationOffset); easing.type: Easing.InOutSine }
     }
-
+    
     // ─── Flicker ───
     Timer {
         id: flickerTimer
@@ -110,12 +110,12 @@ Item {
         OpacityAnimator { target: visualContainer; to: butterflyRoot.flickerOpacities[2]; duration: butterflyRoot.flickerDurations[2] }
         OpacityAnimator { target: visualContainer; to: butterflyRoot.flickerOpacities[3]; duration: butterflyRoot.flickerDurations[3] }
     }
-
+    
     // ─── Reaction ───
     SequentialAnimation {
         id: reactAnim
         onStarted: scaleAnim.stop()
-        onFinished: { if (!butterflyRoot.lowPowerMode) scaleAnim.restart() }
+        onFinished: { if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) scaleAnim.restart() }
         ParallelAnimation {
             ScaleAnimator { target: visualContainer; to: 1.4; duration: 250; easing.type: Easing.OutBack }
             OpacityAnimator { target: visualContainer; to: 0.3; duration: 80 }
@@ -125,43 +125,44 @@ Item {
             OpacityAnimator { target: visualContainer; to: 1.0; duration: 250 }
         }
     }
-
+    
     function react() {
-        if (!butterflyRoot.lowPowerMode) reactAnim.restart()
+        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) reactAnim.restart()
     }
-
+    
     function restartScale() {
-        if (!butterflyRoot.lowPowerMode) scaleAnim.restart()
+        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) scaleAnim.restart()
     }
     
     function restartFloatAndRotation() {
-        if (!butterflyRoot.lowPowerMode) {
+        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) {
             floatAnim.restart()
             rotAnim.restart()
         }
     }
-
-    onLowPowerModeChanged: {
-        if (lowPowerMode) {
-            floatAnim.stop()
-            scaleAnim.stop()
-            rotAnim.stop()
-            flickerTimer.stop()
-            flickerAnim.stop()
+    
+    // ─── Control Lifecycle ───
+    function startAll() {
+        if (butterflyRoot.isVisible && !butterflyRoot.lowPowerMode) {
+            floatAnim.start()
+            scaleAnim.start()
+            rotAnim.start()
+            flickerTimer.start()
         } else {
-            floatAnim.start()
-            scaleAnim.start()
-            rotAnim.start()
-            flickerTimer.start()
+            stopAll()
         }
     }
-
-    Component.onCompleted: {
-        if (!lowPowerMode) {
-            floatAnim.start()
-            scaleAnim.start()
-            rotAnim.start()
-            flickerTimer.start()
-        }
+    
+    function stopAll() {
+        floatAnim.stop()
+        scaleAnim.stop()
+        rotAnim.stop()
+        flickerTimer.stop()
+        flickerAnim.stop()
+        reactAnim.stop()
     }
+    
+    onIsVisibleChanged: startAll()
+    onLowPowerModeChanged: startAll()
+    Component.onCompleted: startAll()
 }
